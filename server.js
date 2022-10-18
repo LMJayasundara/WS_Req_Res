@@ -5,19 +5,6 @@ var express = require('express');
 var app = express();
 const wsEvents = require('ws-events');
 
-////////////////////////////////////////////
-
-const heartbeat = (ws) => {
-    ws.isAlive = true;
-};
-
-const ping = (client) => {
-    // do some stuff
-    console.log("ping to client");
-};
-
-////////////////////////////////////////////
-
 var req_res_reconn = null;
 
 var server = new http.createServer({}, app);
@@ -107,13 +94,6 @@ wss.on('connection', function (ws, request) {
     ws.id = request.identity;
     console.log("Connected Charger ID: "  + ws.id);
 
-    ////////////////////////////////////////////
-
-    ws.isAlive = true;
-    ws.on('pong', () => { heartbeat(ws) });
-
-    ////////////////////////////////////////////
-
     wss.clients.forEach(function (client) {
         if(client.id == request.identity && client.readyState === client.OPEN){
             client.send(JSON.stringify(""));
@@ -139,28 +119,6 @@ wss.on('connection', function (ws, request) {
     });
 
 });
-
-////////////////////////////////////////////
-
-const interval = setInterval(() => {
-    wss.clients.forEach((client) => {
-        console.log("isAlive: ", client.isAlive);
-
-        if (client.isAlive === false) {
-            console.log("Terminate");
-            return client.terminate()
-        };
-
-        client.isAlive = false;
-        client.ping(() => { ping(client) });
-    });
-}, 5000);
-
-// wss.on('close', function close() {
-//     clearInterval(interval);
-// });
-
-////////////////////////////////////////////
 
 server.listen(PORT, ()=>{
     console.log( (new Date()) + " Server is listening on port " + PORT);

@@ -84,17 +84,6 @@ function startWebsocket() {
         },
     });
 
-    ////////////////////////////////////////////
-
-    const heartbeat = (ws) => {
-        console.log("ping to server");
-        clearTimeout(ws.pingTimeout);
-    };
-    
-    const ping = () => { heartbeat(ws) };
-
-    ////////////////////////////////////////////
-
     var evt = wsEvents(ws);
     let reqC1 = new req_from_client(evt, 'Creq', 'Cres', 'req from client'); // evt, req_topic, res_topic, req_msg
     let reqS1 = new req_from_server(evt, 'Sreq', 'Sres', 'res from client');
